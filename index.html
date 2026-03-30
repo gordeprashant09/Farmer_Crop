@@ -167,6 +167,24 @@
   .spinner{width:18px;height:18px;border:2px solid #ddd;border-top-color:var(--green);border-radius:50%;animation:spin .7s linear infinite;display:inline-block;}
   @keyframes spin{to{transform:rotate(360deg)}}
 
+  /* ── PROFILE PANEL ── */
+  .profile-avatar{width:72px;height:72px;border-radius:50%;background:var(--green);color:#fff;font-size:32px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;}
+  .profile-name-display{text-align:center;font-family:'Tiro Devanagari Marathi',serif;font-size:18px;font-weight:700;color:var(--brown);margin-bottom:4px;}
+  .profile-phone-display{text-align:center;font-size:13px;color:var(--muted);margin-bottom:20px;}
+  .profile-saved-badge{display:inline-flex;align-items:center;gap:5px;background:#e8f5ef;color:var(--green);font-size:12px;font-weight:600;padding:4px 12px;border-radius:20px;margin:0 auto 16px;display:flex;justify-content:center;}
+  .save-profile-btn{width:100%;background:var(--green);color:#fff;border:none;border-radius:14px;padding:14px;font-size:16px;font-weight:700;font-family:'Tiro Devanagari Marathi',serif;cursor:pointer;margin-top:4px;}
+  .save-profile-btn:hover{background:var(--light-green);}
+
+  /* ── ORDERS PANEL ── */
+  .order-history-item{background:var(--gray);border-radius:14px;padding:14px;margin-bottom:12px;}
+  .order-history-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+  .order-history-id{font-weight:700;color:var(--brown);font-family:'Tiro Devanagari Marathi',serif;font-size:15px;}
+  .order-history-date{font-size:12px;color:var(--muted);}
+  .order-history-items{font-size:13px;color:var(--muted);margin-bottom:6px;}
+  .order-history-total{font-weight:700;color:var(--green);font-size:15px;}
+  .order-status-badge{font-size:11px;background:var(--green);color:#fff;padding:3px 10px;border-radius:20px;font-weight:600;}
+  .no-orders{text-align:center;padding:30px;color:var(--muted);}
+
   .pb-nav{padding-bottom:90px;}
   @media(min-width:480px){
     .product-grid{grid-template-columns:repeat(3,1fr);}
@@ -191,7 +209,7 @@
     </div>
     <div class="header-icons">
       <button class="icon-btn" onclick="openCart()">🛒<span class="cart-badge" id="cartBadge">0</span></button>
-      <button class="icon-btn">👤</button>
+      <button class="icon-btn" onclick="openProfile()">👤</button>
     </div>
   </div>
   <div class="delivery-bar">⚡ डिलिव्हरी <span class="time">30 मिनिटांत</span> &nbsp;•&nbsp; <span id="locationDisplay" onclick="changeLocation()" style="cursor:pointer;text-decoration:underline dotted;text-underline-offset:3px;">📍 शोधतोय...</span></div>
@@ -221,16 +239,49 @@
 </div>
 
 <div class="bottom-nav">
-  <div class="nav-item active"><span class="nav-icon">🏠</span><span>मुख्यपृष्ठ</span></div>
-  <div class="nav-item"><span class="nav-icon">🔍</span><span>शोधा</span></div>
-  <div class="nav-item" onclick="openCart()"><span class="nav-icon">🛒</span><span>टोपली</span></div>
-  <div class="nav-item"><span class="nav-icon">📦</span><span>ऑर्डर</span></div>
-  <div class="nav-item"><span class="nav-icon">👤</span><span>प्रोफाइल</span></div>
+  <div class="nav-item active" id="nav-home" onclick="navTo('home')"><span class="nav-icon">🏠</span><span>मुख्यपृष्ठ</span></div>
+  <div class="nav-item" id="nav-search" onclick="navTo('search')"><span class="nav-icon">🔍</span><span>शोधा</span></div>
+  <div class="nav-item" id="nav-cart" onclick="openCart()"><span class="nav-icon">🛒</span><span>टोपली</span></div>
+  <div class="nav-item" id="nav-orders" onclick="openOrders()"><span class="nav-icon">📦</span><span>ऑर्डर</span></div>
+  <div class="nav-item" id="nav-profile" onclick="openProfile()"><span class="nav-icon">👤</span><span>प्रोफाइल</span></div>
 </div>
 
 </div><!-- /mainApp -->
 
-<!-- ═══════════════ LOCATION MODAL ═══════════════ -->
+<!-- ═══════════════ PROFILE PANEL ═══════════════ -->
+<div class="overlay" id="profileOverlay" onclick="closeProfile()"></div>
+<div class="panel" id="profilePanel">
+  <div class="panel-handle"></div>
+  <div class="panel-title">👤 माझे प्रोफाइल</div>
+
+  <div class="profile-avatar" id="profileAvatar">👤</div>
+  <div class="profile-name-display" id="profileNameDisplay">नाव भरा</div>
+  <div class="profile-phone-display" id="profilePhoneDisplay">फोन नंबर भरा</div>
+
+  <div class="form-group">
+    <label class="form-label">👤 पूर्ण नाव *</label>
+    <input class="form-input" id="profileName" placeholder="उदा. राजेश पाटील" type="text"/>
+  </div>
+  <div class="form-group">
+    <label class="form-label">📱 मोबाईल नंबर *</label>
+    <input class="form-input" id="profilePhone" placeholder="उदा. 9876543210" type="tel" maxlength="10"/>
+  </div>
+  <div class="form-group">
+    <label class="form-label">🏠 घराचा पत्ता</label>
+    <textarea class="form-textarea" id="profileAddress" placeholder="घर नं., रस्ता, गाव/शहर, पिन कोड..."></textarea>
+  </div>
+  <button class="save-profile-btn" onclick="saveProfile()">💾 प्रोफाइल जतन करा</button>
+</div>
+
+<!-- ═══════════════ ORDERS PANEL ═══════════════ -->
+<div class="overlay" id="ordersOverlay" onclick="closeOrders()"></div>
+<div class="panel" id="ordersPanel">
+  <div class="panel-handle"></div>
+  <div class="panel-title">📦 माझ्या ऑर्डर</div>
+  <div id="ordersListContainer"></div>
+</div>
+
+
 <div class="loc-modal" id="locModal">
   <div class="loc-box">
     <div class="loc-handle"></div>
@@ -410,6 +461,106 @@ const products = [
 
 let cart={}, currentCat='all', searchQuery='', currentOrder=null;
 
+// ── PROFILE (localStorage) ──
+function loadProfile(){
+  const p = JSON.parse(localStorage.getItem('shtkProfile')||'{}');
+  return p;
+}
+function saveProfile(){
+  const name = document.getElementById('profileName').value.trim();
+  const phone = document.getElementById('profilePhone').value.trim();
+  const address = document.getElementById('profileAddress').value.trim();
+  if(!name){ alert('कृपया नाव लिहा'); return; }
+  if(!phone||phone.length<10){ alert('कृपया योग्य मोबाईल नंबर लिहा'); return; }
+  localStorage.setItem('shtkProfile', JSON.stringify({name, phone, address}));
+  updateProfileDisplay();
+  alert('✅ प्रोफाइल जतन झाले!');
+  closeProfile();
+}
+function updateProfileDisplay(){
+  const p = loadProfile();
+  if(p.name){
+    document.getElementById('profileNameDisplay').textContent = p.name;
+    document.getElementById('profilePhoneDisplay').textContent = p.phone ? '📱 ' + p.phone : 'फोन नंबर भरा';
+    document.getElementById('profileAvatar').textContent = p.name.charAt(0).toUpperCase();
+    document.getElementById('profileName').value = p.name;
+    document.getElementById('profilePhone').value = p.phone||'';
+    document.getElementById('profileAddress').value = p.address||'';
+  }
+}
+
+// ── ORDERS HISTORY ──
+function getOrderHistory(){
+  return JSON.parse(localStorage.getItem('shtkOrders')||'[]');
+}
+function saveOrderToHistory(order){
+  const history = getOrderHistory();
+  history.unshift({...order, savedAt: new Date().toISOString()});
+  // keep last 20 orders
+  localStorage.setItem('shtkOrders', JSON.stringify(history.slice(0,20)));
+}
+
+// ── PROFILE PANEL ──
+function openProfile(){
+  updateProfileDisplay();
+  document.getElementById('profileOverlay').classList.add('open');
+  document.getElementById('profilePanel').classList.add('open');
+  setNavActive('profile');
+}
+function closeProfile(){
+  document.getElementById('profileOverlay').classList.remove('open');
+  document.getElementById('profilePanel').classList.remove('open');
+  setNavActive('home');
+}
+
+// ── ORDERS PANEL ──
+function openOrders(){
+  renderOrderHistory();
+  document.getElementById('ordersOverlay').classList.add('open');
+  document.getElementById('ordersPanel').classList.add('open');
+  setNavActive('orders');
+}
+function closeOrders(){
+  document.getElementById('ordersOverlay').classList.remove('open');
+  document.getElementById('ordersPanel').classList.remove('open');
+  setNavActive('home');
+}
+function renderOrderHistory(){
+  const history = getOrderHistory();
+  const container = document.getElementById('ordersListContainer');
+  if(!history.length){
+    container.innerHTML='<div class="no-orders">📦<br><br>अजून कोणती ऑर्डर नाही<br><small>पहिली ऑर्डर द्या!</small></div>';
+    return;
+  }
+  container.innerHTML = history.map(o=>`
+    <div class="order-history-item">
+      <div class="order-history-header">
+        <span class="order-history-id">${o.orderId}</span>
+        <span class="order-status-badge">✅ दिली</span>
+      </div>
+      <div class="order-history-date">📅 ${o.date} · 🕐 ${o.time||''}</div>
+      <div class="order-history-items">${o.items.map(i=>`${i.emoji} ${i.name} ×${i.qty}`).join(', ')}</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;">
+        <span class="order-history-total">₹${o.grand}</span>
+        <span style="font-size:12px;color:var(--muted);">📍 ${o.address.substring(0,30)}${o.address.length>30?'...':''}</span>
+      </div>
+    </div>`).join('');
+}
+
+// ── NAV ACTIVE STATE ──
+function setNavActive(tab){
+  document.querySelectorAll('.nav-item').forEach(el=>el.classList.remove('active'));
+  const el = document.getElementById('nav-'+tab);
+  if(el) el.classList.add('active');
+}
+function navTo(tab){
+  if(tab==='search'){
+    document.querySelector('.search-bar input').focus();
+  }
+  setNavActive(tab);
+}
+
+
 // ── HELPERS ──
 function getFiltered(){
   return products.filter(p=>{
@@ -503,6 +654,17 @@ function openCheckout(){
   closeCart();
   // pre-fill today's date
   document.getElementById('custDate').value=todayDate();
+  // AUTO-FILL from saved profile
+  const p = loadProfile();
+  if(p.name && !document.getElementById('custName').value){
+    document.getElementById('custName').value = p.name;
+  }
+  if(p.phone && !document.getElementById('custPhone').value){
+    document.getElementById('custPhone').value = p.phone;
+  }
+  if(p.address && !document.getElementById('custAddress').value){
+    document.getElementById('custAddress').value = p.address;
+  }
   // mini summary
   const keys=Object.keys(cart);let sub=0;
   const rows=keys.map(id=>{const p=products.find(x=>x.id==id),q=cart[id],t=p.price*q;sub+=t;return `<div class="sum-item"><span>${p.emoji} ${p.name} ×${q}</span><span>₹${t}</span></div>`;}).join('');
@@ -538,6 +700,7 @@ function placeOrder(){
   const orderDate=date?new Date(date).toLocaleDateString('mr-IN',{weekday:'long',year:'numeric',month:'long',day:'numeric'}):new Date().toLocaleDateString('mr-IN',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
 
   currentOrder={orderId,name,phone,address,date:orderDate,time,note,items,sub,del,grand};
+  saveOrderToHistory(currentOrder);
 
   closeCheckout();
   showConfirmation();
@@ -618,11 +781,10 @@ function newOrder(){
   updateBadge();renderGrid();
   document.getElementById('confirmScreen').classList.remove('show');
   document.getElementById('mainApp').style.display='block';
-  document.getElementById('custName').value='';
-  document.getElementById('custPhone').value='';
-  document.getElementById('custAddress').value='';
+  // clear only note, keep profile fields for next order convenience
   document.getElementById('custNote').value='';
   window.scrollTo(0,0);
+  setNavActive('home');
 }
 
 // ── LOCATION ──
@@ -737,6 +899,7 @@ window.addEventListener('load', ()=>{
 });
 
 // ── INIT ──
+updateProfileDisplay();
 renderGrid();
 </script>
 </body>
