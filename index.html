@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>शेतकरी_पीक | Farmer_Crop</title>
+<link href="https://fonts.googleapis.com/css2?family=Tiro+Devanagari+Marathi&family=Yatra+One&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green:#2d6a4f; --light-green:#52b788; --yellow:#f4a522;
+    --cream:#fef9ef; --brown:#6b3f1f; --orange:#e07b1a;
+    --gray:#f0ebe1; --text:#1a1a1a; --muted:#6b7280;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Poppins',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;}
+
+  /* ── HEADER ── */
+  header{background:var(--green);color:#fff;padding:0 20px;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.2);}
+  .header-top{display:flex;align-items:center;justify-content:space-between;padding:14px 0 10px;}
+  .logo{display:flex;align-items:center;gap:10px;}
+  .logo-icon{font-size:32px;}
+  .logo-text .main{font-family:'Yatra One',cursive;font-size:22px;}
+  .logo-text .sub{font-size:11px;opacity:.8;text-transform:uppercase;letter-spacing:1px;}
+  .header-icons{display:flex;align-items:center;gap:14px;}
+  .icon-btn{background:rgba(255,255,255,.15);border:none;color:#fff;width:38px;height:38px;border-radius:50%;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;position:relative;transition:background .2s;}
+  .icon-btn:hover{background:rgba(255,255,255,.25);}
+  .cart-badge{position:absolute;top:-4px;right:-4px;background:var(--yellow);color:#000;font-size:10px;font-weight:700;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+  .delivery-bar{background:rgba(255,255,255,.1);border-radius:8px;padding:7px 12px;margin-bottom:12px;font-size:13px;display:flex;align-items:center;gap:6px;}
+  .delivery-bar .time{font-weight:700;color:var(--yellow);font-size:15px;}
+  .search-bar{background:#fff;border-radius:10px;display:flex;align-items:center;padding:10px 14px;gap:10px;margin-bottom:14px;}
+  .search-bar input{border:none;outline:none;font-size:14px;font-family:'Tiro Devanagari Marathi',serif;flex:1;background:transparent;}
+  .search-bar input::placeholder{color:#aaa;}
+
+  /* ── CATEGORIES ── */
+  .categories{padding:18px 20px 0;display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;}
+  .categories::-webkit-scrollbar{display:none;}
+  .cat-chip{background:#fff;border:2px solid transparent;border-radius:24px;padding:7px 16px;font-size:13px;font-family:'Tiro Devanagari Marathi',serif;cursor:pointer;white-space:nowrap;transition:all .2s;color:var(--text);font-weight:500;box-shadow:0 1px 4px rgba(0,0,0,.07);}
+  .cat-chip.active,.cat-chip:hover{background:var(--green);color:#fff;border-color:var(--green);}
+
+  /* ── BANNER ── */
+  .banner{margin:16px 20px;background:linear-gradient(135deg,var(--green),var(--light-green));border-radius:16px;padding:22px 20px;color:#fff;position:relative;overflow:hidden;}
+  .banner::after{content:'🌾';position:absolute;right:20px;top:50%;transform:translateY(-50%);font-size:72px;opacity:.25;}
+  .banner .tag{background:var(--yellow);color:#000;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;display:inline-block;margin-bottom:8px;}
+  .banner h2{font-family:'Tiro Devanagari Marathi',serif;font-size:20px;margin-bottom:4px;}
+  .banner p{font-size:13px;opacity:.88;}
+
+  /* ── SECTION / GRID ── */
+  .section{padding:20px 20px 0;}
+  .section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+  .section-title{font-family:'Tiro Devanagari Marathi',serif;font-size:19px;font-weight:700;color:var(--brown);display:flex;align-items:center;gap:8px;}
+  .product-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;}
+  .product-card{background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.07);transition:transform .2s,box-shadow .2s;position:relative;}
+  .product-card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.12);}
+  .product-img{background:var(--gray);height:120px;display:flex;align-items:center;justify-content:center;font-size:56px;position:relative;}
+  .badge{position:absolute;top:8px;left:8px;background:var(--orange);color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;}
+  .badge.organic{background:var(--green);}
+  .product-info{padding:12px;}
+  .product-name{font-family:'Tiro Devanagari Marathi',serif;font-size:15px;font-weight:700;margin-bottom:2px;}
+  .product-name-en{font-size:11px;color:var(--muted);margin-bottom:4px;}
+  .product-weight{font-size:12px;color:var(--muted);margin-bottom:8px;}
+  .product-footer{display:flex;align-items:center;justify-content:space-between;}
+  .price{font-size:16px;font-weight:700;color:var(--brown);}
+  .price .old{font-size:12px;color:#aaa;text-decoration:line-through;margin-right:4px;}
+  .add-btn{background:var(--green);color:#fff;border:none;border-radius:8px;padding:7px 14px;font-size:13px;font-weight:600;cursor:pointer;transition:background .2s,transform .1s;}
+  .add-btn:hover{background:var(--light-green);}
+  .add-btn:active{transform:scale(.95);}
+  .qty-control{display:flex;align-items:center;gap:6px;background:var(--green);border-radius:8px;padding:5px 10px;}
+  .qty-btn{background:none;border:none;color:#fff;font-size:18px;cursor:pointer;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-weight:700;}
+  .qty-num{color:#fff;font-weight:700;min-width:18px;text-align:center;}
+
+  /* ── BOTTOM NAV ── */
+  .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#fff;display:flex;justify-content:space-around;align-items:center;padding:12px 0 18px;box-shadow:0 -2px 12px rgba(0,0,0,.1);z-index:100;}
+  .nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;color:var(--muted);font-size:11px;transition:color .2s;}
+  .nav-item.active{color:var(--green);}
+  .nav-item .nav-icon{font-size:22px;}
+
+  /* ── OVERLAY / PANELS ── */
+  .overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:none;}
+  .overlay.open{display:block;}
+  .panel{position:fixed;bottom:0;left:0;right:0;background:#fff;border-radius:24px 24px 0 0;padding:20px 20px 40px;z-index:201;max-height:90vh;overflow-y:auto;transform:translateY(100%);transition:transform .3s ease;}
+  .panel.open{transform:translateY(0);}
+  .panel-handle{width:40px;height:4px;background:#ddd;border-radius:2px;margin:0 auto 16px;}
+  .panel-title{font-family:'Tiro Devanagari Marathi',serif;font-size:20px;font-weight:700;margin-bottom:16px;color:var(--brown);}
+
+  /* ── CART ── */
+  .cart-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--gray);}
+  .cart-item-emoji{font-size:32px;}
+  .cart-item-info{flex:1;}
+  .cart-item-name{font-family:'Tiro Devanagari Marathi',serif;font-weight:700;font-size:15px;}
+  .cart-item-weight{font-size:12px;color:var(--muted);}
+  .cart-item-price{font-weight:700;color:var(--brown);}
+  .cart-total-box{margin-top:16px;padding:14px;background:var(--gray);border-radius:12px;}
+  .total-row{display:flex;justify-content:space-between;margin-bottom:6px;font-size:14px;}
+  .total-row.grand{font-size:17px;font-weight:700;color:var(--brown);margin-top:8px;border-top:1px solid #ddd;padding-top:8px;}
+  .proceed-btn{width:100%;margin-top:16px;background:var(--green);color:#fff;border:none;border-radius:14px;padding:16px;font-size:17px;font-weight:700;font-family:'Tiro Devanagari Marathi',serif;cursor:pointer;transition:background .2s;}
+  .proceed-btn:hover{background:var(--light-green);}
+  .empty-cart{text-align:center;padding:30px;color:var(--muted);font-size:15px;}
+
+  /* ── CHECKOUT FORM ── */
+  .form-group{margin-bottom:16px;}
+  .form-label{font-family:'Tiro Devanagari Marathi',serif;font-size:14px;font-weight:600;color:var(--brown);margin-bottom:6px;display:block;}
+  .form-input,.form-select,.form-textarea{width:100%;padding:12px 14px;border:2px solid #e5e5e5;border-radius:12px;font-size:14px;font-family:'Poppins',sans-serif;outline:none;transition:border .2s;background:#fff;}
+  .form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--green);}
+  .form-textarea{resize:none;height:80px;}
+  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .order-summary-mini{background:var(--gray);border-radius:12px;padding:12px;margin-bottom:16px;font-size:13px;}
+  .order-summary-mini .sum-title{font-weight:700;color:var(--brown);margin-bottom:8px;font-family:'Tiro Devanagari Marathi',serif;font-size:15px;}
+  .sum-item{display:flex;justify-content:space-between;margin-bottom:4px;color:var(--muted);}
+  .sum-total{display:flex;justify-content:space-between;font-weight:700;color:var(--brown);border-top:1px solid #ddd;padding-top:8px;margin-top:6px;}
+  .place-order-btn{width:100%;margin-top:6px;background:var(--green);color:#fff;border:none;border-radius:14px;padding:16px;font-size:17px;font-weight:700;font-family:'Tiro Devanagari Marathi',serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;}
+  .place-order-btn:hover{background:var(--light-green);}
+  .whatsapp-note{text-align:center;font-size:12px;color:var(--muted);margin-top:10px;}
+  .whatsapp-note span{color:#25D366;font-weight:600;}
+
+  /* ── ORDER CONFIRMATION ── */
+  #confirmScreen{display:none;position:fixed;inset:0;background:var(--cream);z-index:500;overflow-y:auto;padding:30px 20px 40px;}
+  #confirmScreen.show{display:block;}
+  .confirm-top{text-align:center;margin-bottom:24px;}
+  .confirm-icon{font-size:72px;margin-bottom:12px;animation:pop .5s ease;}
+  @keyframes pop{0%{transform:scale(0)}100%{transform:scale(1)}}
+  .confirm-title{font-family:'Tiro Devanagari Marathi',serif;font-size:26px;font-weight:700;color:var(--green);margin-bottom:6px;}
+  .confirm-sub{font-size:14px;color:var(--muted);}
+  .order-id-box{background:var(--green);color:#fff;border-radius:14px;padding:14px 20px;text-align:center;margin-bottom:20px;}
+  .order-id-label{font-size:12px;opacity:.8;margin-bottom:4px;}
+  .order-id-val{font-size:22px;font-weight:700;letter-spacing:2px;font-family:'Yatra One',cursive;}
+  .info-card{background:#fff;border-radius:16px;padding:18px;margin-bottom:16px;box-shadow:0 2px 10px rgba(0,0,0,.06);}
+  .info-card-title{font-family:'Tiro Devanagari Marathi',serif;font-size:16px;font-weight:700;color:var(--brown);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--gray);display:flex;align-items:center;gap:8px;}
+  .info-row{display:flex;justify-content:space-between;margin-bottom:8px;font-size:14px;}
+  .info-row .label{color:var(--muted);}
+  .info-row .val{font-weight:600;text-align:right;max-width:60%;}
+  .items-list .item-line{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--gray);font-size:14px;}
+  .items-list .item-line:last-child{border:none;}
+  .grand-line{display:flex;justify-content:space-between;margin-top:10px;padding-top:10px;border-top:2px solid var(--green);font-size:17px;font-weight:700;color:var(--brown);}
+  .delivery-timeline{display:flex;align-items:center;gap:0;margin:8px 0;}
+  .tl-step{display:flex;flex-direction:column;align-items:center;flex:1;}
+  .tl-dot{width:28px;height:28px;border-radius:50%;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;margin-bottom:4px;}
+  .tl-line{flex:1;height:3px;background:var(--light-green);margin-bottom:20px;}
+  .tl-label{font-size:11px;color:var(--muted);text-align:center;}
+  .action-btns{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px;}
+  .action-btn{padding:14px;border:none;border-radius:14px;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;}
+  .btn-whatsapp{background:#25D366;color:#fff;}
+  .btn-email{background:#EA4335;color:#fff;}
+  .btn-new-order{width:100%;margin-top:12px;background:var(--green);color:#fff;border:none;border-radius:14px;padding:16px;font-size:16px;font-weight:700;font-family:'Tiro Devanagari Marathi',serif;cursor:pointer;}
+
+  /* ── LOCATION MODAL ── */
+  .loc-modal{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:600;display:none;align-items:flex-end;justify-content:center;}
+  .loc-modal.open{display:flex;}
+  .loc-box{background:#fff;border-radius:24px 24px 0 0;padding:24px 20px 40px;width:100%;max-width:480px;}
+  .loc-handle{width:40px;height:4px;background:#ddd;border-radius:2px;margin:0 auto 16px;}
+  .loc-title{font-family:'Tiro Devanagari Marathi',serif;font-size:18px;font-weight:700;color:var(--brown);margin-bottom:4px;}
+  .loc-sub{font-size:12px;color:var(--muted);margin-bottom:16px;}
+  .loc-detect-btn{width:100%;background:var(--green);color:#fff;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:14px;}
+  .loc-detect-btn:hover{background:var(--light-green);}
+  .loc-divider{text-align:center;color:var(--muted);font-size:13px;margin-bottom:14px;position:relative;}
+  .loc-divider::before,.loc-divider::after{content:'';position:absolute;top:50%;width:42%;height:1px;background:#e5e5e5;}
+  .loc-divider::before{left:0;} .loc-divider::after{right:0;}
+  .loc-presets{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+  .loc-preset{background:var(--gray);border:2px solid transparent;border-radius:12px;padding:12px;text-align:center;cursor:pointer;transition:all .2s;}
+  .loc-preset:hover,.loc-preset.sel{border-color:var(--green);background:#e8f5ef;}
+  .loc-preset .city{font-family:'Tiro Devanagari Marathi',serif;font-weight:700;font-size:15px;color:var(--brown);}
+  .loc-preset .area{font-size:11px;color:var(--muted);margin-top:2px;}
+  .loc-custom-row{display:flex;gap:8px;}
+  .loc-custom-input{flex:1;padding:11px 14px;border:2px solid #e5e5e5;border-radius:12px;font-size:14px;outline:none;}
+  .loc-custom-input:focus{border-color:var(--green);}
+  .loc-set-btn{background:var(--green);color:#fff;border:none;border-radius:12px;padding:11px 16px;font-weight:700;cursor:pointer;font-size:14px;}
+  .loc-detecting{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);padding:8px 0;}
+  .spinner{width:18px;height:18px;border:2px solid #ddd;border-top-color:var(--green);border-radius:50%;animation:spin .7s linear infinite;display:inline-block;}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  .pb-nav{padding-bottom:90px;}
+  @media(min-width:480px){
+    .product-grid{grid-template-columns:repeat(3,1fr);}
+    body,header,.bottom-nav{max-width:480px;}
+    header,.bottom-nav{left:50%;transform:translateX(-50%);}
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ MAIN APP ═══════════════ -->
+<div id="mainApp">
+
+<header>
+  <div class="header-top">
+    <div class="logo">
+      <span class="logo-icon">🌾</span>
+      <div class="logo-text">
+        <div class="main">शेतकरी_पीक</div>
+        <div class="sub">Farmer_Crop • थेट शेतातून</div>
+      </div>
+    </div>
+    <div class="header-icons">
+      <button class="icon-btn" onclick="openCart()">🛒<span class="cart-badge" id="cartBadge">0</span></button>
+      <button class="icon-btn">👤</button>
+    </div>
+  </div>
+  <div class="delivery-bar">⚡ डिलिव्हरी <span class="time">30 मिनिटांत</span> &nbsp;•&nbsp; <span id="locationDisplay" onclick="changeLocation()" style="cursor:pointer;text-decoration:underline dotted;text-underline-offset:3px;">📍 शोधतोय...</span></div>
+  <div class="search-bar">🔍 <input type="text" placeholder="गहू, ज्वारी, भाज्या शोधा..." oninput="filterProducts(this.value)"/></div>
+</header>
+
+<div class="pb-nav">
+  <div class="categories">
+    <div class="cat-chip active" onclick="filterCat('all',this)">सर्व</div>
+    <div class="cat-chip" onclick="filterCat('grain',this)">🌾 धान्य</div>
+    <div class="cat-chip" onclick="filterCat('veg',this)">🥦 भाज्या</div>
+    <div class="cat-chip" onclick="filterCat('pulse',this)">🫘 डाळी</div>
+    <div class="cat-chip" onclick="filterCat('spice',this)">🌶️ मसाले</div>
+    <div class="cat-chip" onclick="filterCat('flour',this)">🧇 पिठे</div>
+  </div>
+  <div class="banner">
+    <div class="tag">🎉 आजची ऑफर</div>
+    <h2>ताजी शेती, थेट घरी!</h2>
+    <p>पहिल्या ऑर्डरवर ₹50 सूट — कोड: <strong>SHETKARI50</strong></p>
+  </div>
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">🌾 आमची उत्पादने</div>
+    </div>
+    <div class="product-grid" id="productGrid"></div>
+  </div>
+</div>
+
+<div class="bottom-nav">
+  <div class="nav-item active"><span class="nav-icon">🏠</span><span>मुख्यपृष्ठ</span></div>
+  <div class="nav-item"><span class="nav-icon">🔍</span><span>शोधा</span></div>
+  <div class="nav-item" onclick="openCart()"><span class="nav-icon">🛒</span><span>टोपली</span></div>
+  <div class="nav-item"><span class="nav-icon">📦</span><span>ऑर्डर</span></div>
+  <div class="nav-item"><span class="nav-icon">👤</span><span>प्रोफाइल</span></div>
+</div>
+
+</div><!-- /mainApp -->
+
+<!-- ═══════════════ LOCATION MODAL ═══════════════ -->
+<div class="loc-modal" id="locModal">
+  <div class="loc-box">
+    <div class="loc-handle"></div>
+    <div class="loc-title">📍 डिलिव्हरी कुठे करायची?</div>
+    <div class="loc-sub">तुमचे स्थान निवडा किंवा आपोआप शोधा</div>
+
+    <button class="loc-detect-btn" onclick="detectLocation()">
+      🌐 GPS ने आपोआप शोधा
+    </button>
+    <div id="detectStatus"></div>
+
+    <div class="loc-divider">किंवा निवडा</div>
+
+    <div class="loc-presets">
+      <div class="loc-preset sel" id="preset-nerul" onclick="selectPreset('नेरुळ, मुंबई','Nerul, Mumbai','preset-nerul')">
+        <div class="city">नेरुळ</div>
+        <div class="area">नवी मुंबई</div>
+      </div>
+      <div class="loc-preset" id="preset-pune" onclick="selectPreset('पुणे, महाराष्ट्र','Pune, Maharashtra','preset-pune')">
+        <div class="city">पुणे</div>
+        <div class="area">महाराष्ट्र</div>
+      </div>
+      <div class="loc-preset" id="preset-nashik" onclick="selectPreset('नाशिक, महाराष्ट्र','Nashik, Maharashtra','preset-nashik')">
+        <div class="city">नाशिक</div>
+        <div class="area">महाराष्ट्र</div>
+      </div>
+      <div class="loc-preset" id="preset-nagpur" onclick="selectPreset('नागपूर, महाराष्ट्र','Nagpur, Maharashtra','preset-nagpur')">
+        <div class="city">नागपूर</div>
+        <div class="area">महाराष्ट्र</div>
+      </div>
+    </div>
+
+    <div class="loc-custom-row">
+      <input class="loc-custom-input" id="customLocInput" placeholder="दुसरे शहर टाइप करा..."/>
+      <button class="loc-set-btn" onclick="setCustomLocation()">ठीक आहे</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ CART PANEL ═══════════════ -->
+<div class="overlay" id="cartOverlay" onclick="closeCart()"></div>
+<div class="panel" id="cartPanel">
+  <div class="panel-handle"></div>
+  <div class="panel-title">🛒 माझी टोपली</div>
+  <div id="cartItems"></div>
+  <div id="cartTotalSection"></div>
+</div>
+
+<!-- ═══════════════ CHECKOUT PANEL ═══════════════ -->
+<div class="overlay" id="checkoutOverlay" onclick="closeCheckout()"></div>
+<div class="panel" id="checkoutPanel">
+  <div class="panel-handle"></div>
+  <div class="panel-title">📋 ऑर्डर माहिती भरा</div>
+
+  <div class="order-summary-mini" id="checkoutSummary"></div>
+
+  <div class="form-group">
+    <label class="form-label">👤 तुमचे पूर्ण नाव *</label>
+    <input class="form-input" id="custName" placeholder="उदा. राजेश पाटील" type="text"/>
+  </div>
+  <div class="form-group">
+    <label class="form-label">📱 मोबाईल नंबर *</label>
+    <input class="form-input" id="custPhone" placeholder="उदा. 9876543210" type="tel" maxlength="10"/>
+  </div>
+  <div class="form-group">
+    <label class="form-label">🏠 पूर्ण पत्ता *</label>
+    <textarea class="form-textarea" id="custAddress" placeholder="घर नं., रस्ता, गाव/शहर, पिन कोड..."></textarea>
+  </div>
+  <div class="form-row">
+    <div class="form-group">
+      <label class="form-label">📅 तारीख</label>
+      <input class="form-input" id="custDate" type="date"/>
+    </div>
+    <div class="form-group">
+      <label class="form-label">🕐 वेळ</label>
+      <select class="form-select" id="custTime">
+        <option value="सकाळी 8–10">सकाळी 8–10</option>
+        <option value="सकाळी 10–12">सकाळी 10–12</option>
+        <option value="दुपारी 12–2">दुपारी 12–2</option>
+        <option value="दुपारी 2–5">दुपारी 2–5</option>
+        <option value="संध्याकाळी 5–8">संध्याकाळी 5–8</option>
+      </select>
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="form-label">💬 विशेष सूचना (ऐच्छिक)</label>
+    <input class="form-input" id="custNote" placeholder="उदा. गेट बंद असेल तर फोन करा..." type="text"/>
+  </div>
+
+  <button class="place-order-btn" onclick="placeOrder()">
+    ✅ ऑर्डर द्या
+  </button>
+  <div class="whatsapp-note">ऑर्डर <span>WhatsApp</span> + Email वर पाठवली जाईल</div>
+</div>
+
+<!-- ═══════════════ CONFIRMATION SCREEN ═══════════════ -->
+<div id="confirmScreen">
+  <div class="confirm-top">
+    <div class="confirm-icon">✅</div>
+    <div class="confirm-title">ऑर्डर यशस्वी!</div>
+    <div class="confirm-sub">तुमची ऑर्डर मिळाली. लवकरच डिलिव्हरी होईल.</div>
+  </div>
+
+  <div class="order-id-box">
+    <div class="order-id-label">ऑर्डर नंबर</div>
+    <div class="order-id-val" id="confOrderId">FC-0000</div>
+  </div>
+
+  <!-- Customer Info -->
+  <div class="info-card">
+    <div class="info-card-title">👤 ग्राहक माहिती</div>
+    <div class="info-row"><span class="label">नाव</span><span class="val" id="confName">—</span></div>
+    <div class="info-row"><span class="label">मोबाईल</span><span class="val" id="confPhone">—</span></div>
+    <div class="info-row"><span class="label">पत्ता</span><span class="val" id="confAddress">—</span></div>
+  </div>
+
+  <!-- Delivery Time -->
+  <div class="info-card">
+    <div class="info-card-title">🚜 डिलिव्हरी वेळ</div>
+    <div class="delivery-timeline">
+      <div class="tl-step"><div class="tl-dot">✅</div><div class="tl-label">ऑर्डर मिळाली</div></div>
+      <div class="tl-line"></div>
+      <div class="tl-step"><div class="tl-dot">📦</div><div class="tl-label">तयार होतेय</div></div>
+      <div class="tl-line"></div>
+      <div class="tl-step"><div class="tl-dot">🚜</div><div class="tl-label">निघालो</div></div>
+      <div class="tl-line"></div>
+      <div class="tl-step"><div class="tl-dot">🏠</div><div class="tl-label">पोहोचलो</div></div>
+    </div>
+    <div class="info-row"><span class="label">तारीख</span><span class="val" id="confDate">—</span></div>
+    <div class="info-row"><span class="label">वेळ</span><span class="val" id="confTime">—</span></div>
+    <div class="info-row"><span class="label">अंदाजित डिलिव्हरी</span><span class="val" style="color:var(--green)">30 मिनिटे</span></div>
+  </div>
+
+  <!-- Order Items -->
+  <div class="info-card">
+    <div class="info-card-title">🛒 ऑर्डर तपशील</div>
+    <div class="items-list" id="confItems"></div>
+    <div id="confTotals"></div>
+    <div class="info-row" style="margin-top:8px"><span class="label">विशेष सूचना</span><span class="val" id="confNote">—</span></div>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="action-btns">
+    <button class="action-btn btn-whatsapp" onclick="sendWhatsApp()">📱 WhatsApp</button>
+    <button class="action-btn btn-email" onclick="sendEmail()">📧 Email</button>
+  </div>
+  <button class="btn-new-order" onclick="newOrder()">🌾 नवीन ऑर्डर द्या</button>
+</div>
+
+<script>
+// ── YOUR BUSINESS DETAILS – change these! ──
+const OWNER_WHATSAPP = '8459827676'; // your WhatsApp number with country code (91 for India)
+const OWNER_EMAIL    = 'prashantdadagorde1996@gmail.com';  // your email address
+
+const products = [
+  {id:1,name:'गहू',en:'Wheat',emoji:'🌾',weight:'1 किलो',price:45,old:55,cat:'grain',badge:'ताजे',badgeType:''},
+  {id:2,name:'ज्वारी',en:'Sorghum',emoji:'🌽',weight:'1 किलो',price:38,old:48,cat:'grain',badge:'सेंद्रिय',badgeType:'organic'},
+  {id:3,name:'बाजरी',en:'Millet',emoji:'🌿',weight:'1 किलो',price:42,old:50,cat:'grain',badge:'ताजे',badgeType:''},
+  {id:4,name:'तांदूळ',en:'Rice',emoji:'🍚',weight:'1 किलो',price:65,old:80,cat:'grain',badge:'नाशिक',badgeType:''},
+  {id:5,name:'मका',en:'Corn / Maize',emoji:'🌽',weight:'1 किलो',price:30,old:40,cat:'grain',badge:'सेंद्रिय',badgeType:'organic'},
+  {id:6,name:'नाचणी',en:'Finger Millet',emoji:'🟤',weight:'500 ग्रॅम',price:55,old:70,cat:'grain',badge:'पौष्टिक',badgeType:''},
+  {id:7,name:'टोमॅटो',en:'Tomato',emoji:'🍅',weight:'500 ग्रॅम',price:25,old:35,cat:'veg',badge:'ताजे',badgeType:''},
+  {id:8,name:'कांदा',en:'Onion',emoji:'🧅',weight:'1 किलो',price:35,old:45,cat:'veg',badge:'नाशिक',badgeType:''},
+  {id:9,name:'बटाटा',en:'Potato',emoji:'🥔',weight:'1 किलो',price:30,old:40,cat:'veg',badge:'ताजे',badgeType:''},
+  {id:10,name:'वांगे',en:'Brinjal',emoji:'🍆',weight:'500 ग्रॅम',price:20,old:28,cat:'veg',badge:'सेंद्रिय',badgeType:'organic'},
+  {id:11,name:'मेथी',en:'Fenugreek',emoji:'🌿',weight:'250 ग्रॅम',price:15,old:20,cat:'veg',badge:'ताजे',badgeType:''},
+  {id:12,name:'मिरची',en:'Green Chilli',emoji:'🌶️',weight:'250 ग्रॅम',price:18,old:25,cat:'veg',badge:'तिखट',badgeType:''},
+  {id:13,name:'तूर डाळ',en:'Pigeon Pea Dal',emoji:'🟡',weight:'1 किलो',price:120,old:145,cat:'pulse',badge:'A1',badgeType:''},
+  {id:14,name:'हरभरा',en:'Chickpea',emoji:'🫘',weight:'1 किलो',price:90,old:110,cat:'pulse',badge:'सेंद्रिय',badgeType:'organic'},
+  {id:15,name:'उडीद डाळ',en:'Black Gram Dal',emoji:'⚫',weight:'500 ग्रॅम',price:75,old:90,cat:'pulse',badge:'ताजे',badgeType:''},
+  {id:16,name:'गव्हाचे पीठ',en:'Wheat Flour',emoji:'🧇',weight:'1 किलो',price:48,old:58,cat:'flour',badge:'ताजे दळण',badgeType:''},
+  {id:17,name:'बेसन',en:'Gram Flour',emoji:'🟡',weight:'500 ग्रॅम',price:52,old:65,cat:'flour',badge:'शुद्ध',badgeType:''},
+  {id:18,name:'हळद',en:'Turmeric',emoji:'🟠',weight:'200 ग्रॅम',price:40,old:55,cat:'spice',badge:'सेंद्रिय',badgeType:'organic'},
+  {id:19,name:'धने',en:'Coriander Seeds',emoji:'🟢',weight:'200 ग्रॅम',price:35,old:45,cat:'spice',badge:'ताजे',badgeType:''},
+  {id:20,name:'जिरे',en:'Cumin',emoji:'🟫',weight:'100 ग्रॅम',price:30,old:42,cat:'spice',badge:'विदर्भ',badgeType:''},
+];
+
+let cart={}, currentCat='all', searchQuery='', currentOrder=null;
+
+// ── HELPERS ──
+function getFiltered(){
+  return products.filter(p=>{
+    const cm=currentCat==='all'||p.cat===currentCat;
+    const sm=!searchQuery||p.name.includes(searchQuery)||p.en.toLowerCase().includes(searchQuery.toLowerCase());
+    return cm&&sm;
+  });
+}
+function cartTotal(){
+  return Object.entries(cart).reduce((s,[id,q])=>{
+    const p=products.find(x=>x.id==id); return s+(p?p.price*q:0);
+  },0);
+}
+function cartCount(){return Object.values(cart).reduce((a,b)=>a+b,0);}
+function genOrderId(){return 'FC-'+Math.floor(1000+Math.random()*9000);}
+function todayDate(){return new Date().toISOString().split('T')[0];}
+
+// ── PRODUCT GRID ──
+function renderGrid(){
+  const grid=document.getElementById('productGrid');
+  const filtered=getFiltered();
+  if(!filtered.length){grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:30px;color:#aaa;">🔍 उत्पादन सापडले नाही</div>';return;}
+  grid.innerHTML=filtered.map(p=>{
+    const qty=cart[p.id]||0;
+    return `<div class="product-card">
+      <div class="product-img">
+        ${p.badge?`<span class="badge ${p.badgeType}">${p.badge}</span>`:''}
+        <span>${p.emoji}</span>
+      </div>
+      <div class="product-info">
+        <div class="product-name">${p.name}</div>
+        <div class="product-name-en">${p.en}</div>
+        <div class="product-weight">📦 ${p.weight}</div>
+        <div class="product-footer">
+          <div class="price">${p.old?`<span class="old">₹${p.old}</span>`:''}₹${p.price}</div>
+          ${qty===0
+            ?`<button class="add-btn" onclick="addToCart(${p.id})">+ घाला</button>`
+            :`<div class="qty-control">
+                <button class="qty-btn" onclick="changeQty(${p.id},-1)">−</button>
+                <span class="qty-num">${qty}</span>
+                <button class="qty-btn" onclick="changeQty(${p.id},1)">+</button>
+              </div>`}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+function addToCart(id){cart[id]=1;updateBadge();renderGrid();}
+function changeQty(id,d){
+  cart[id]=(cart[id]||0)+d;
+  if(cart[id]<=0)delete cart[id];
+  updateBadge();renderGrid();
+  if(document.getElementById('cartPanel').classList.contains('open'))renderCart();
+}
+function updateBadge(){document.getElementById('cartBadge').textContent=cartCount();}
+function filterCat(cat,el){currentCat=cat;document.querySelectorAll('.cat-chip').forEach(c=>c.classList.remove('active'));el.classList.add('active');renderGrid();}
+function filterProducts(v){searchQuery=v;renderGrid();}
+
+// ── CART PANEL ──
+function openCart(){renderCart();document.getElementById('cartOverlay').classList.add('open');document.getElementById('cartPanel').classList.add('open');}
+function closeCart(){document.getElementById('cartOverlay').classList.remove('open');document.getElementById('cartPanel').classList.remove('open');}
+function renderCart(){
+  const keys=Object.keys(cart);
+  const itemsDiv=document.getElementById('cartItems');
+  const totalDiv=document.getElementById('cartTotalSection');
+  if(!keys.length){
+    itemsDiv.innerHTML='<div class="empty-cart">🛒<br>टोपली रिकामी आहे<br><small>काहीतरी घाला!</small></div>';
+    totalDiv.innerHTML='';return;
+  }
+  let sub=0;
+  itemsDiv.innerHTML=keys.map(id=>{
+    const p=products.find(x=>x.id==id),q=cart[id],t=p.price*q;sub+=t;
+    return `<div class="cart-item">
+      <span class="cart-item-emoji">${p.emoji}</span>
+      <div class="cart-item-info"><div class="cart-item-name">${p.name}</div><div class="cart-item-weight">${p.weight} × ${q}</div></div>
+      <div class="cart-item-price">₹${t}</div>
+    </div>`;
+  }).join('');
+  const del=sub>=300?0:30, grand=sub+del;
+  totalDiv.innerHTML=`<div class="cart-total-box">
+    <div class="total-row"><span>उप-एकूण</span><span>₹${sub}</span></div>
+    <div class="total-row"><span>डिलिव्हरी</span><span>${del===0?'<span style="color:var(--green)">मोफत 🎉</span>':'₹'+del}</span></div>
+    ${sub<300?`<div style="font-size:12px;color:var(--green);margin-bottom:4px;">₹${300-sub} आणखी जोडा — मोफत डिलिव्हरी!</div>`:''}
+    <div class="total-row grand"><span>एकूण</span><span>₹${grand}</span></div>
+  </div>
+  <button class="proceed-btn" onclick="openCheckout()">📋 पुढे चला — माहिती द्या</button>`;
+}
+
+// ── CHECKOUT PANEL ──
+function openCheckout(){
+  closeCart();
+  // pre-fill today's date
+  document.getElementById('custDate').value=todayDate();
+  // mini summary
+  const keys=Object.keys(cart);let sub=0;
+  const rows=keys.map(id=>{const p=products.find(x=>x.id==id),q=cart[id],t=p.price*q;sub+=t;return `<div class="sum-item"><span>${p.emoji} ${p.name} ×${q}</span><span>₹${t}</span></div>`;}).join('');
+  const del=sub>=300?0:30;
+  document.getElementById('checkoutSummary').innerHTML=`<div class="sum-title">🛒 तुमची टोपली (${cartCount()} वस्तू)</div>${rows}<div class="sum-total"><span>एकूण</span><span>₹${sub+del}</span></div>`;
+  document.getElementById('checkoutOverlay').classList.add('open');
+  document.getElementById('checkoutPanel').classList.add('open');
+}
+function closeCheckout(){document.getElementById('checkoutOverlay').classList.remove('open');document.getElementById('checkoutPanel').classList.remove('open');}
+
+// ── PLACE ORDER ──
+function placeOrder(){
+  const name=document.getElementById('custName').value.trim();
+  const phone=document.getElementById('custPhone').value.trim();
+  const address=document.getElementById('custAddress').value.trim();
+  const date=document.getElementById('custDate').value;
+  const time=document.getElementById('custTime').value;
+  const note=document.getElementById('custNote').value.trim()||'काही नाही';
+
+  if(!name){alert('कृपया नाव लिहा');return;}
+  if(!phone||phone.length<10){alert('कृपया योग्य मोबाईल नंबर लिहा');return;}
+  if(!address){alert('कृपया पत्ता लिहा');return;}
+
+  const keys=Object.keys(cart);
+  let sub=0;
+  const items=keys.map(id=>{
+    const p=products.find(x=>x.id==id),q=cart[id],t=p.price*q;sub+=t;
+    return {name:p.name,en:p.en,emoji:p.emoji,weight:p.weight,qty:q,price:p.price,total:t};
+  });
+  const del=sub>=300?0:30;
+  const grand=sub+del;
+  const orderId=genOrderId();
+  const orderDate=date?new Date(date).toLocaleDateString('mr-IN',{weekday:'long',year:'numeric',month:'long',day:'numeric'}):new Date().toLocaleDateString('mr-IN',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+
+  currentOrder={orderId,name,phone,address,date:orderDate,time,note,items,sub,del,grand};
+
+  closeCheckout();
+  showConfirmation();
+}
+
+// ── CONFIRMATION SCREEN ──
+function showConfirmation(){
+  const o=currentOrder;
+  document.getElementById('confOrderId').textContent=o.orderId;
+  document.getElementById('confName').textContent=o.name;
+  document.getElementById('confPhone').textContent='📱 '+o.phone;
+  document.getElementById('confAddress').textContent=o.address;
+  document.getElementById('confDate').textContent=o.date;
+  document.getElementById('confTime').textContent=o.time;
+  document.getElementById('confNote').textContent=o.note;
+
+  document.getElementById('confItems').innerHTML=o.items.map(i=>
+    `<div class="item-line"><span>${i.emoji} ${i.name} (${i.weight}) ×${i.qty}</span><span>₹${i.total}</span></div>`
+  ).join('');
+
+  document.getElementById('confTotals').innerHTML=`
+    <div class="info-row" style="margin-top:8px"><span class="label">उप-एकूण</span><span class="val">₹${o.sub}</span></div>
+    <div class="info-row"><span class="label">डिलिव्हरी</span><span class="val">${o.del===0?'मोफत 🎉':'₹'+o.del}</span></div>
+    <div class="grand-line"><span>एकूण</span><span>₹${o.grand}</span></div>`;
+
+  document.getElementById('confirmScreen').classList.add('show');
+  document.getElementById('mainApp').style.display='none';
+  window.scrollTo(0,0);
+
+  // auto-send
+  setTimeout(()=>{sendWhatsApp();},800);
+}
+
+// ── WHATSAPP SEND ──
+function sendWhatsApp(){
+  const o=currentOrder;
+  const itemLines=o.items.map(i=>`  • ${i.emoji} ${i.name} (${i.weight}) ×${i.qty} = ₹${i.total}`).join('\n');
+  const msg=`🌾 *शेतकरी_पीक - नवीन ऑर्डर!*\n\n`+
+    `🔖 *ऑर्डर नं:* ${o.orderId}\n\n`+
+    `👤 *ग्राहक माहिती*\n`+
+    `नाव: ${o.name}\n`+
+    `मोबाईल: ${o.phone}\n`+
+    `पत्ता: ${o.address}\n\n`+
+    `🚜 *डिलिव्हरी वेळ*\n`+
+    `तारीख: ${o.date}\n`+
+    `वेळ: ${o.time}\n\n`+
+    `🛒 *ऑर्डर तपशील*\n`+itemLines+`\n\n`+
+    `💰 उप-एकूण: ₹${o.sub}\n`+
+    `🚚 डिलिव्हरी: ${o.del===0?'मोफत':'₹'+o.del}\n`+
+    `✅ *एकूण: ₹${o.grand}*\n\n`+
+    `📝 विशेष सूचना: ${o.note}\n\n`+
+    `_Farmer_Crop - थेट शेतातून_ 🌱`;
+
+  const url=`https://wa.me/${OWNER_WHATSAPP}?text=${encodeURIComponent(msg)}`;
+  window.open(url,'_blank');
+}
+
+// ── EMAIL SEND ──
+function sendEmail(){
+  const o=currentOrder;
+  const itemLines=o.items.map(i=>`  • ${i.emoji} ${i.name} (${i.weight}) ×${i.qty} = ₹${i.total}`).join('\n');
+  const subject=`[Farmer_Crop] नवीन ऑर्डर ${o.orderId} - ${o.name}`;
+  const body=`शेतकरी_पीक - नवीन ऑर्डर\n\n`+
+    `ऑर्डर नं: ${o.orderId}\n\n`+
+    `ग्राहक माहिती:\n`+
+    `नाव: ${o.name}\nमोबाईल: ${o.phone}\nपत्ता: ${o.address}\n\n`+
+    `डिलिव्हरी वेळ:\nतारीख: ${o.date}\nवेळ: ${o.time}\n\n`+
+    `ऑर्डर तपशील:\n`+itemLines+`\n\n`+
+    `उप-एकूण: ₹${o.sub}\nडिलिव्हरी: ${o.del===0?'मोफत':'₹'+o.del}\nएकूण: ₹${o.grand}\n\n`+
+    `विशेष सूचना: ${o.note}\n\nFarmer_Crop - थेट शेतातून 🌱`;
+
+  window.open(`mailto:${OWNER_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`,'_blank');
+}
+
+// ── NEW ORDER ──
+function newOrder(){
+  cart={};currentOrder=null;
+  updateBadge();renderGrid();
+  document.getElementById('confirmScreen').classList.remove('show');
+  document.getElementById('mainApp').style.display='block';
+  document.getElementById('custName').value='';
+  document.getElementById('custPhone').value='';
+  document.getElementById('custAddress').value='';
+  document.getElementById('custNote').value='';
+  window.scrollTo(0,0);
+}
+
+// ── LOCATION ──
+const DEFAULT_LOCATION = 'नेरुळ, मुंबई';
+let currentLocation = DEFAULT_LOCATION;
+
+function setLocationDisplay(text){
+  currentLocation = text;
+  document.getElementById('locationDisplay').textContent = '📍 ' + text;
+}
+
+function changeLocation(){
+  document.getElementById('locModal').classList.add('open');
+}
+
+function closeLocModal(){
+  document.getElementById('locModal').classList.remove('open');
+}
+
+function selectPreset(marathi, english, presetId){
+  document.querySelectorAll('.loc-preset').forEach(el=>el.classList.remove('sel'));
+  document.getElementById(presetId).classList.add('sel');
+  setLocationDisplay(marathi);
+  setTimeout(closeLocModal, 400);
+}
+
+function setCustomLocation(){
+  const val = document.getElementById('customLocInput').value.trim();
+  if(!val){ alert('कृपया स्थान लिहा'); return; }
+  setLocationDisplay(val);
+  document.getElementById('customLocInput').value='';
+  closeLocModal();
+}
+
+function detectLocation(){
+  const statusDiv = document.getElementById('detectStatus');
+  if(!navigator.geolocation){
+    statusDiv.innerHTML='<div class="loc-detecting">❌ तुमचा browser GPS support करत नाही</div>';
+    return;
+  }
+  statusDiv.innerHTML='<div class="loc-detecting"><span class="spinner"></span> GPS शोधतोय...</div>';
+  navigator.geolocation.getCurrentPosition(
+    pos=>{
+      const {latitude:lat, longitude:lng} = pos.coords;
+      statusDiv.innerHTML='<div class="loc-detecting"><span class="spinner"></span> पत्ता मिळवतोय...</div>';
+      fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`)
+        .then(r=>r.json())
+        .then(data=>{
+          const a = data.address;
+          // build a nice short location string
+          const suburb = a.suburb || a.neighbourhood || a.village || a.town || '';
+          const city   = a.city || a.town || a.county || '';
+          const state  = a.state || '';
+          let loc = suburb ? `${suburb}, ${city||state}` : `${city}, ${state}`;
+          loc = loc.replace(/^,\s*/,'').replace(/,\s*$/,'');
+          setLocationDisplay(loc || 'तुमचे स्थान');
+          statusDiv.innerHTML='<div class="loc-detecting" style="color:var(--green)">✅ स्थान सापडले!</div>';
+          document.querySelectorAll('.loc-preset').forEach(el=>el.classList.remove('sel'));
+          setTimeout(closeLocModal, 800);
+        })
+        .catch(()=>{
+          setLocationDisplay('तुमचे स्थान');
+          statusDiv.innerHTML='<div class="loc-detecting" style="color:var(--green)">✅ GPS मिळाले!</div>';
+          setTimeout(closeLocModal, 600);
+        });
+    },
+    err=>{
+      let msg='❌ GPS परवानगी नाकारली — खाली निवडा';
+      statusDiv.innerHTML=`<div class="loc-detecting">${msg}</div>`;
+    },
+    {timeout:10000, enableHighAccuracy:true}
+  );
+}
+
+// Close modal when clicking outside the box
+document.getElementById('locModal').addEventListener('click', function(e){
+  if(e.target===this) closeLocModal();
+});
+
+// ── AUTO DETECT ON LOAD ──
+window.addEventListener('load', ()=>{
+  // Show modal after short delay for better UX
+  setTimeout(()=>{
+    if(navigator.geolocation){
+      // silently try GPS first without showing modal
+      navigator.geolocation.getCurrentPosition(
+        pos=>{
+          const {latitude:lat, longitude:lng} = pos.coords;
+          fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`)
+            .then(r=>r.json())
+            .then(data=>{
+              const a = data.address;
+              const suburb = a.suburb || a.neighbourhood || a.village || a.town || '';
+              const city   = a.city || a.town || a.county || '';
+              const state  = a.state || '';
+              let loc = suburb ? `${suburb}, ${city||state}` : `${city}, ${state}`;
+              loc = loc.replace(/^,\s*/,'').replace(/,\s*$/,'');
+              setLocationDisplay(loc || DEFAULT_LOCATION);
+            })
+            .catch(()=>setLocationDisplay(DEFAULT_LOCATION));
+        },
+        ()=>{
+          // Permission denied or unavailable → use default silently
+          setLocationDisplay(DEFAULT_LOCATION);
+        },
+        {timeout:6000}
+      );
+    } else {
+      setLocationDisplay(DEFAULT_LOCATION);
+    }
+  }, 300);
+});
+
+// ── INIT ──
+renderGrid();
+</script>
+</body>
+</html>
