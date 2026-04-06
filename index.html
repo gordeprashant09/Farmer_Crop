@@ -167,6 +167,17 @@
   .spinner{width:18px;height:18px;border:2px solid #ddd;border-top-color:var(--green);border-radius:50%;animation:spin .7s linear infinite;display:inline-block;}
   @keyframes spin{to{transform:rotate(360deg)}}
 
+  /* ── COUPON ── */
+  .coupon-row{display:flex;gap:8px;margin:12px 0 0;}
+  .coupon-input{flex:1;padding:11px 14px;border:2px solid #e5e5e5;border-radius:12px;font-size:14px;outline:none;font-family:'Poppins',sans-serif;text-transform:uppercase;letter-spacing:1px;}
+  .coupon-input:focus{border-color:var(--green);}
+  .coupon-apply-btn{background:var(--green);color:#fff;border:none;border-radius:12px;padding:11px 16px;font-weight:700;cursor:pointer;font-size:14px;white-space:nowrap;}
+  .coupon-apply-btn:hover{background:var(--light-green);}
+  .coupon-success{background:#e8f5ef;border:1px solid var(--light-green);border-radius:10px;padding:10px 14px;font-size:13px;color:var(--green);font-weight:600;display:flex;align-items:center;justify-content:space-between;margin-top:8px;}
+  .coupon-remove{background:none;border:none;color:#e74c3c;font-size:18px;cursor:pointer;font-weight:700;line-height:1;}
+  .coupon-error{color:#e74c3c;font-size:13px;margin-top:6px;font-weight:500;}
+  .discount-row{color:var(--green);font-weight:600;}
+
   /* ── PROFILE PANEL ── */
   .profile-avatar{width:72px;height:72px;border-radius:50%;background:var(--green);color:#fff;font-size:32px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;}
   .profile-name-display{text-align:center;font-family:'Tiro Devanagari Marathi',serif;font-size:18px;font-weight:700;color:var(--brown);margin-bottom:4px;}
@@ -459,7 +470,32 @@ const products = [
   {id:20,name:'जिरे',en:'Cumin',emoji:'🟫',weight:'100 ग्रॅम',price:30,old:42,cat:'spice',badge:'विदर्भ',badgeType:''},
 ];
 
-let cart={}, currentCat='all', searchQuery='', currentOrder=null;
+let cart={}, currentCat='all', searchQuery='', currentOrder=null, appliedCoupon=null;
+
+// ── COUPON CODES (add/edit yours here) ──
+const COUPONS = {
+  'SHETKARI50': { pct: 10, desc: '10% सूट' },
+  'NEWUSER':    { pct: 15, desc: '15% सूट — नवीन ग्राहक' },
+  'FARMER20':   { pct: 20, desc: '20% सूट' },
+  'WELCOME':    { pct: 5,  desc: '5% सूट' },
+};
+
+function applyCoupon(){
+  const code = (document.getElementById('couponInput').value||'').trim().toUpperCase();
+  const msgDiv = document.getElementById('couponMsg');
+  if(!code){ msgDiv.innerHTML='<div class="coupon-error">कृपया कूपन कोड टाका</div>'; return; }
+  if(COUPONS[code]){
+    appliedCoupon = { code, ...COUPONS[code] };
+    msgDiv.innerHTML='';
+    renderCart();
+  } else {
+    msgDiv.innerHTML='<div class="coupon-error">❌ हा कूपन कोड चुकीचा आहे</div>';
+  }
+}
+function removeCoupon(){
+  appliedCoupon=null;
+  renderCart();
+}
 
 // ── PROFILE (localStorage) ──
 function loadProfile(){
@@ -640,13 +676,22 @@ function renderCart(){
     </div>`;
   }).join('');
   const del=sub>=300?0:30, grand=sub+del;
+  const disc=appliedCoupon?Math.round(sub*appliedCoupon.pct/100):0;
+  const finalGrand=grand-disc;
   totalDiv.innerHTML=`<div class="cart-total-box">
     <div class="total-row"><span>उप-एकूण</span><span>₹${sub}</span></div>
     <div class="total-row"><span>डिलिव्हरी</span><span>${del===0?'<span style="color:var(--green)">मोफत 🎉</span>':'₹'+del}</span></div>
     ${sub<300?`<div style="font-size:12px;color:var(--green);margin-bottom:4px;">₹${300-sub} आणखी जोडा — मोफत डिलिव्हरी!</div>`:''}
-    <div class="total-row grand"><span>एकूण</span><span>₹${grand}</span></div>
+    ${disc>0?`<div class="total-row discount-row"><span>🎟️ सूट (${appliedCoupon.code})</span><span>−₹${disc}</span></div>`:''}
+    <div class="total-row grand"><span>एकूण</span><span>₹${finalGrand}</span></div>
   </div>
-  <button class="proceed-btn" onclick="openCheckout()">📋 पुढे चला — माहिती द्या</button>`;
+  <div class="coupon-row">
+    <input class="coupon-input" id="couponInput" placeholder="कूपन कोड टाका..." value="${appliedCoupon?appliedCoupon.code:''}"/>
+    <button class="coupon-apply-btn" onclick="applyCoupon()">लागू करा</button>
+  </div>
+  <div id="couponMsg"></div>
+  ${appliedCoupon?`<div class="coupon-success">🎉 ${appliedCoupon.code} — ${appliedCoupon.pct}% सूट लागली! <button class="coupon-remove" onclick="removeCoupon()">✕</button></div>`:''}
+  <button class="proceed-btn" onclick="openCheckout()" style="margin-top:12px">📋 पुढे चला — माहिती द्या</button>`;
 }
 
 // ── CHECKOUT PANEL ──
@@ -669,7 +714,10 @@ function openCheckout(){
   const keys=Object.keys(cart);let sub=0;
   const rows=keys.map(id=>{const p=products.find(x=>x.id==id),q=cart[id],t=p.price*q;sub+=t;return `<div class="sum-item"><span>${p.emoji} ${p.name} ×${q}</span><span>₹${t}</span></div>`;}).join('');
   const del=sub>=300?0:30;
-  document.getElementById('checkoutSummary').innerHTML=`<div class="sum-title">🛒 तुमची टोपली (${cartCount()} वस्तू)</div>${rows}<div class="sum-total"><span>एकूण</span><span>₹${sub+del}</span></div>`;
+  const disc=appliedCoupon?Math.round(sub*appliedCoupon.pct/100):0;
+  const finalGrand=sub+del-disc;
+  const couponLine=appliedCoupon?`<div class="sum-item" style="color:var(--green)"><span>🎟️ ${appliedCoupon.code}</span><span>−₹${disc}</span></div>`:'';
+  document.getElementById('checkoutSummary').innerHTML=`<div class="sum-title">🛒 तुमची टोपली (${cartCount()} वस्तू)</div>${rows}${couponLine}<div class="sum-total"><span>एकूण</span><span>₹${finalGrand}</span></div>`;
   document.getElementById('checkoutOverlay').classList.add('open');
   document.getElementById('checkoutPanel').classList.add('open');
 }
@@ -695,11 +743,12 @@ function placeOrder(){
     return {name:p.name,en:p.en,emoji:p.emoji,weight:p.weight,qty:q,price:p.price,total:t};
   });
   const del=sub>=300?0:30;
-  const grand=sub+del;
+  const disc=appliedCoupon?Math.round(sub*appliedCoupon.pct/100):0;
+  const grand=sub+del-disc;
   const orderId=genOrderId();
   const orderDate=date?new Date(date).toLocaleDateString('mr-IN',{weekday:'long',year:'numeric',month:'long',day:'numeric'}):new Date().toLocaleDateString('mr-IN',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
 
-  currentOrder={orderId,name,phone,address,date:orderDate,time,note,items,sub,del,grand};
+  currentOrder={orderId,name,phone,address,date:orderDate,time,note,items,sub,del,disc,coupon:appliedCoupon?appliedCoupon.code:'',grand};
   saveOrderToHistory(currentOrder);
 
   closeCheckout();
@@ -724,6 +773,7 @@ function showConfirmation(){
   document.getElementById('confTotals').innerHTML=`
     <div class="info-row" style="margin-top:8px"><span class="label">उप-एकूण</span><span class="val">₹${o.sub}</span></div>
     <div class="info-row"><span class="label">डिलिव्हरी</span><span class="val">${o.del===0?'मोफत 🎉':'₹'+o.del}</span></div>
+    ${o.disc>0?`<div class="info-row" style="color:var(--green)"><span class="label">🎟️ सूट (${o.coupon})</span><span class="val">−₹${o.disc}</span></div>`:''}
     <div class="grand-line"><span>एकूण</span><span>₹${o.grand}</span></div>`;
 
   document.getElementById('confirmScreen').classList.add('show');
@@ -750,6 +800,7 @@ function sendWhatsApp(){
     `🛒 *ऑर्डर तपशील*\n`+itemLines+`\n\n`+
     `💰 उप-एकूण: ₹${o.sub}\n`+
     `🚚 डिलिव्हरी: ${o.del===0?'मोफत':'₹'+o.del}\n`+
+    (o.disc>0?`🎟️ सूट (${o.coupon}): −₹${o.disc}\n`:'')+
     `✅ *एकूण: ₹${o.grand}*\n\n`+
     `📝 विशेष सूचना: ${o.note}\n\n`+
     `_Farmer_Crop - थेट शेतातून_ 🌱`;
@@ -777,7 +828,7 @@ function sendEmail(){
 
 // ── NEW ORDER ──
 function newOrder(){
-  cart={};currentOrder=null;
+  cart={};currentOrder=null;appliedCoupon=null;
   updateBadge();renderGrid();
   document.getElementById('confirmScreen').classList.remove('show');
   document.getElementById('mainApp').style.display='block';
